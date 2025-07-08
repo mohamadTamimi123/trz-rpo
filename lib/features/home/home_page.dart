@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Text(
-              'پیام خود را وارد کنید:',
+              'شرح ماجرا :',
               style: TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 12),
