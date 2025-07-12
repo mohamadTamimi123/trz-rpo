@@ -15,7 +15,7 @@ class _DisplayPageState extends State<DisplayPage> {
   String _apiResult = '';
   String? _selectedEmotion;
   bool _isLoading = true;
-  bool _manualSelectionEnabled = false;
+  bool _manualSelectionEnabled = true;
 
   final List<String> emotions = [
     'رنجش و دلچرکین شدن',
@@ -33,27 +33,29 @@ class _DisplayPageState extends State<DisplayPage> {
 
   Future<void> getData() async {
     setState(() {
-      _isLoading = true;
-      _manualSelectionEnabled = false;
+      _isLoading = false;
+      _manualSelectionEnabled = true;
     });
 
-    try {
-      final result = await ApiService.getRole(widget.message);
-      final data = jsonDecode(result); // دیکود رشته JSON
-      final emotion = data['emotion']; // استخراج مقدار
+    if (!_manualSelectionEnabled) {
+      try {
+        final result = await ApiService.getRole(widget.message);
+        final data = jsonDecode(result); // دیکود رشته JSON
+        final emotion = data['emotion']; // استخراج مقدار
 
-      setState(() {
-        _apiResult = emotion ?? 'پاسخ نامعتبر است';
-        _selectedEmotion = emotions.contains(emotion) ? emotion : null;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        print(e);
-        _apiResult = '';
-        _isLoading = false;
-      });
-      _showErrorDialog();
+        setState(() {
+          _apiResult = emotion ?? 'پاسخ نامعتبر است';
+          _selectedEmotion = emotions.contains(emotion) ? emotion : null;
+          _isLoading = false;
+        });
+      } catch (e) {
+        setState(() {
+          print(e);
+          _apiResult = '';
+          _isLoading = false;
+        });
+        _showErrorDialog();
+      }
     }
   }
 
@@ -182,14 +184,11 @@ class _DisplayPageState extends State<DisplayPage> {
             const SizedBox(height: 16),
             Row(
               children: [
-                ElevatedButton(
-                  onPressed: getData,
-                  child: const Text('بررسی مجدد'),
-                ),
-                const SizedBox(width: 12),
-                ElevatedButton(
-                  onPressed: _handleSend,
-                  child: const Text('مرحله بعد و تحلیل نقص'),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _handleSend,
+                    child: const Text('مرحله بعد و تحلیل نقص'),
+                  ),
                 ),
               ],
             ),
